@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AGE AI 🤖 | Fun Game Hub</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.app{
+  width:400px;
+  background:#fff;
+  padding:25px;
+  border-radius:25px;
+  box-shadow:0 30px 60px rgba(0,0,0,.3);
+}
+h1{text-align:center;color:#ff2f56}
+.sub{text-align:center;color:#555;font-size:14px;margin-bottom:15px}
+
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:12px;
+  border:2px solid #ddd;
+  font-size:15px;
+}
+button{
+  background:linear-gradient(135deg,#ff512f,#dd2476);
+  color:white;
+  border:none;
+  cursor:pointer;
+  transition:.3s;
+}
+button:hover{transform:scale(1.05)}
+
+.section{
+  margin-top:15px;
+  padding:15px;
+  border-radius:15px;
+  display:none;
+}
+.result{background:#fff0f3}
+.games{background:#e3f2fd}
+.gameBox{
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
+  margin-top:8px;
+}
+.funny{font-weight:600;margin-top:8px}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<h1>AGE AI 🤖</h1>
+<p class="sub">Calculate → Roast → Play → Repeat 😎</p>
+
+<input id="day" type="number" placeholder="Day (DD)">
+<input id="month" type="number" placeholder="Month (MM)">
+<input id="year" type="number" placeholder="Year (YYYY)">
+
+<select id="roast">
+  <option value="soft">😇 Soft Roast</option>
+  <option value="medium">😏 Medium Roast</option>
+  <option value="spicy">🔥 Spicy Roast</option>
+</select>
+
+<button onclick="calculate()">Reveal My Life 📜</button>
+
+<!-- RESULT -->
+<div class="section result" id="result">
+  <p id="ageText"></p>
+  <p id="funnyText" class="funny"></p>
+  <button onclick="openGames()">Enter Game Zone 🎮</button>
+</div>
+
+<!-- GAMES -->
+<div class="section games" id="games">
+
+  <!-- Game 1 -->
+  <div class="gameBox">
+    <p><b>🕹️ Life Reality Check</b></p>
+    <p id="q1"></p>
+    <button onclick="g1()">Answer 😌</button>
+    <p id="a1" class="funny"></p>
+  </div>
+
+  <!-- Game 2 -->
+  <div class="gameBox">
+    <p><b>🧠 Mental Age Guess</b></p>
+    <button onclick="g2()">Reveal Mental Age 🤯</button>
+    <p id="a2" class="funny"></p>
+  </div>
+
+  <!-- Game 3 -->
+  <div class="gameBox">
+    <p><b>😂 How Old Do You Sound?</b></p>
+    <button onclick="g3()">Hear My Dialogue 🎭</button>
+    <p id="a3" class="funny"></p>
+  </div>
+
+</div>
+</div>
+
+<script>
+let age=0;
+
+function calculate(){
+  const d=day.value,m=month.value,y=year.value;
+  if(!d||!m||!y){alert("Details ivvu ra 😑");return;}
+
+  const birth=new Date(y,m-1,d);
+  const today=new Date();
+  age=today.getFullYear()-birth.getFullYear();
+  if(today<new Date(today.getFullYear(),birth.getMonth(),birth.getDate())) age--;
+
+  ageText.innerHTML=`🎂 You are <b>${age}</b> years old`;
+
+  funnyText.innerHTML=
+    age<20 ? "Teen detected. Drama loading 😤"
+    : age<30 ? "Confusion phase expert 🤔"
+    : age<40 ? "Back pain starter pack 😴"
+    : "Legend status unlocked 👑";
+
+  result.style.display="block";
+}
+
+function openGames(){
+  games.style.display="block";
+  q1.innerHTML =
+    age<25 ? "Do you actually know what you're doing in life?"
+    : age<40 ? "Is sleep better than parties now?"
+    : "Is morning walk compulsory?";
+}
+
+/* GAME 1 */
+function g1(){
+  a1.innerHTML="Correct answer 😌 Nobody knows what they're doing.";
+}
+
+/* GAME 2 */
+function g2(){
+  let mental =
+    age<20 ? age+20
+    : age<30 ? age+15
+    : age<40 ? age+10
+    : age+5;
+  a2.innerHTML=`Actual age: ${age} | Mental age: ${mental} ☕😂`;
+}
+
+/* GAME 3 */
+function g3(){
+  a3.innerHTML =
+    age<20 ? "Bro chill ra 😎"
+    : age<30 ? "Let's connect on Monday 🤝"
+    : age<40 ? "Weekend gone too fast 😐"
+    : "Tea undha? ☕😌";
+}
+</script>
+
+</body>
+</html>
