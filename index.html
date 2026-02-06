@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AGE AI 🤖 | Fun Game Hub</title>
+<title>AGE AI 🤖 | Roast • Play • Repeat</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
@@ -15,12 +14,15 @@ body{
   align-items:center;
 }
 .app{
-  width:400px;
+  width:380px;
   background:#fff;
   padding:25px;
   border-radius:25px;
-  box-shadow:0 30px 60px rgba(0,0,0,.3);
+  box-shadow:0 25px 50px rgba(0,0,0,.25);
+  animation:pop .5s ease;
 }
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+
 h1{text-align:center;color:#ff2f56}
 .sub{text-align:center;color:#555;font-size:14px;margin-bottom:15px}
 
@@ -33,7 +35,7 @@ input,select,button{
   font-size:15px;
 }
 button{
-  background:linear-gradient(135deg,#ff512f,#dd2476);
+  background:#ff2f56;
   color:white;
   border:none;
   cursor:pointer;
@@ -42,21 +44,24 @@ button{
 button:hover{transform:scale(1.05)}
 
 .section{
+  display:none;
   margin-top:15px;
   padding:15px;
   border-radius:15px;
-  display:none;
 }
 .result{background:#fff0f3}
-.games{background:#e3f2fd}
-.gameBox{
-  background:#fff;
-  padding:10px;
-  border-radius:12px;
-  margin-top:8px;
-}
-.funny{font-weight:600;margin-top:8px}
+.game{background:#e3f2fd}
+.funny{margin-top:10px;font-weight:600}
 
+.confetti{
+  position:fixed;
+  top:-10px;
+  font-size:22px;
+  animation:fall 3s linear;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg)}
+}
 </style>
 </head>
 
@@ -64,7 +69,7 @@ button:hover{transform:scale(1.05)}
 
 <div class="app">
 <h1>AGE AI 🤖</h1>
-<p class="sub">Calculate → Roast → Play → Repeat 😎</p>
+<p class="sub">We calculate… then judge 😌</p>
 
 <input id="day" type="number" placeholder="Day (DD)">
 <input id="month" type="number" placeholder="Month (MM)">
@@ -81,91 +86,134 @@ button:hover{transform:scale(1.05)}
 <!-- RESULT -->
 <div class="section result" id="result">
   <p id="ageText"></p>
+  <p id="monthsText"></p>
+  <p id="daysText"></p>
   <p id="funnyText" class="funny"></p>
-  <button onclick="openGames()">Enter Game Zone 🎮</button>
+  <button onclick="startGame()">Play Mini Game 🎮</button>
+  <button onclick="share()">Share Roast 🔥</button>
 </div>
 
-<!-- GAMES -->
-<div class="section games" id="games">
-
-  <!-- Game 1 -->
-  <div class="gameBox">
-    <p><b>🕹️ Life Reality Check</b></p>
-    <p id="q1"></p>
-    <button onclick="g1()">Answer 😌</button>
-    <p id="a1" class="funny"></p>
-  </div>
-
-  <!-- Game 2 -->
-  <div class="gameBox">
-    <p><b>🧠 Mental Age Guess</b></p>
-    <button onclick="g2()">Reveal Mental Age 🤯</button>
-    <p id="a2" class="funny"></p>
-  </div>
-
-  <!-- Game 3 -->
-  <div class="gameBox">
-    <p><b>😂 How Old Do You Sound?</b></p>
-    <button onclick="g3()">Hear My Dialogue 🎭</button>
-    <p id="a3" class="funny"></p>
-  </div>
-
+<!-- GAME -->
+<div class="section game" id="game">
+  <p id="gameQ"></p>
+  <button onclick="answer()">Accept Reality 😌</button>
 </div>
+
 </div>
 
 <script>
 let age=0;
 
+const roastBank = {
+  teen:{
+    soft:["Pure chaos energy 🧃","Homework still loading 📚"],
+    medium:["Emotions > logic 😭","WiFi is personality 📱"],
+    spicy:["Still asking permission to go out 😌","Career plan: vibes only"]
+  },
+  young:{
+    soft:["Dreams loading… ⏳","Future CEO (in imagination)"],
+    medium:["Sleep schedule broken 💤","Wallet always empty 💸"],
+    spicy:["LinkedIn warrior 🤡","Plans big, execution zero"]
+  },
+  adult:{
+    soft:["Adulting unlocked 🔓","Responsible-ish human"],
+    medium:["Back pain demo version 😴","Weekends too short"],
+    spicy:["Party vs sleep? sleep wins 😐","Bills scary now"]
+  },
+  legend:{
+    soft:["Wise soul 🧠","Experience speaks"],
+    medium:["Tea solves everything ☕","Early morning supremacy"],
+    spicy:["Kids these days 😌","Energy not found"]
+  }
+};
+
+const games = {
+  teen:[
+    "Do you really study or just pretend? 🤔",
+    "Is sleep optional for you? 😴"
+  ],
+  young:[
+    "Do you actually know what you're doing in life? 😐",
+    "Still waiting for that big break? 🎯"
+  ],
+  adult:[
+    "Is comfort more important than style now? 😌",
+    "Back pain without reason? 😭"
+  ],
+  legend:[
+    "Morning walk mandatory, right? ☀️",
+    "Tea before problems? ☕"
+  ]
+};
+
 function calculate(){
   const d=day.value,m=month.value,y=year.value;
-  if(!d||!m||!y){alert("Details ivvu ra 😑");return;}
+  if(!d||!m||!y){alert("Complete details ra 😑");return;}
 
   const birth=new Date(y,m-1,d);
   const today=new Date();
+  if(birth>today){alert("Future human detected 👽");return;}
+
   age=today.getFullYear()-birth.getFullYear();
   if(today<new Date(today.getFullYear(),birth.getMonth(),birth.getDate())) age--;
 
-  ageText.innerHTML=`🎂 You are <b>${age}</b> years old`;
+  const days=Math.floor((today-birth)/(1000*60*60*24));
+  const months=age*12+(today.getMonth()-birth.getMonth());
 
-  funnyText.innerHTML=
-    age<20 ? "Teen detected. Drama loading 😤"
-    : age<30 ? "Confusion phase expert 🤔"
-    : age<40 ? "Back pain starter pack 😴"
-    : "Legend status unlocked 👑";
+  ageText.innerHTML=`🎂 Age: <b>${age}</b> years`;
+  monthsText.innerHTML=`📆 Months lived: <b>${months}</b>`;
+  daysText.innerHTML=`⏳ Days survived: <b>${days}</b>`;
+
+  funnyText.innerHTML=getRoast();
+
+  if(today.getDate()==birth.getDate() && today.getMonth()==birth.getMonth()){
+    confetti();
+    funnyText.innerHTML+=" 🎉 HAPPY BIRTHDAY!";
+  }
 
   result.style.display="block";
+  game.style.display="none";
 }
 
-function openGames(){
-  games.style.display="block";
-  q1.innerHTML =
-    age<25 ? "Do you actually know what you're doing in life?"
-    : age<40 ? "Is sleep better than parties now?"
-    : "Is morning walk compulsory?";
+function getRoast(){
+  let group =
+    age<20 ? "teen" :
+    age<30 ? "young" :
+    age<45 ? "adult" : "legend";
+
+  const level=roast.value;
+  const arr=roastBank[group][level];
+  return arr[Math.floor(Math.random()*arr.length)];
 }
 
-/* GAME 1 */
-function g1(){
-  a1.innerHTML="Correct answer 😌 Nobody knows what they're doing.";
+function startGame(){
+  let group =
+    age<20 ? "teen" :
+    age<30 ? "young" :
+    age<45 ? "adult" : "legend";
+
+  gameQ.innerHTML=games[group][Math.floor(Math.random()*games[group].length)];
+  game.style.display="block";
 }
 
-/* GAME 2 */
-function g2(){
-  let mental =
-    age<20 ? age+20
-    : age<30 ? age+15
-    : age<40 ? age+10
-    : age+5;
-  a2.innerHTML=`Actual age: ${age} | Mental age: ${mental} ☕😂`;
+function answer(){
+  alert("Correct 😌 Nobody has answers.");
 }
 
-/* GAME 3 */
-function g3(){
-  a3.innerHTML =
-    age<20 ? "Bro chill ra 😎"
-    : age<30 ? "Let's connect on Monday 🤝"
-    : age<40 ? "Weekend gone too fast 😐"
-    : "Tea undha? ☕😌";
+function confetti(){
+  for(let i=0;i<20;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.innerHTML="🎉";
+    c.style.left=Math.random()*100+"vw";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+function share(){
+  navigator.clipboard.writeText("I got roasted by AGE AI 🤖😂 Try it yourself!");
+  alert("Copied! Now roast your friends 🔥");
 }
 </script>
 
